@@ -22,22 +22,20 @@ target_link_libraries(boost_sort
     Boost::type_traits
 )
 
-if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
-
-  message(STATUS "Using CMake version ${CMAKE_VERSION}")
-
-  set(Boost_DEBUG ON)
-  find_package(Boost 1.85 CONFIG REQUIRED COMPONENTS core range included_test_exec_monitor)
-
-  include(CTest)
-
-  add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure -C $<CONFIG>)
-  add_dependencies(check tests)
-
-endif()
-
 # Testing
 if(BUILD_TESTING AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/test/CMakeLists.txt")
+
+  if(NOT BOOST_SUPERPROJECT_VERSION)
+
+    message(STATUS "Using CMake version ${CMAKE_VERSION}")
+
+    set(Boost_DEBUG ON)
+    find_package(Boost 1.85 CONFIG REQUIRED COMPONENTS core range included_test_exec_monitor)
+
+    include(CTest)
+    add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure -C $<CONFIG>)
+    add_dependencies(check tests)
+  endif()
 
   # Follow the Boost convention: don't build test targets by default,
   # and only when explicitly requested by building target tests
